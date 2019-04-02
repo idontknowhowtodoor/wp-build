@@ -1,5 +1,9 @@
 <?php if ( $type == 'plugin' ) :?>
+<<<<<<< HEAD
 <div class="updated" style="padding: 0; margin: 0; border: none; background: none;">
+=======
+<div class="updated" id="akismet_setup_prompt">
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 	<form name="akismet_activate" action="<?php echo esc_url( Akismet_Admin::get_page_url() ); ?>" method="POST">
 		<div class="akismet_activate">
 			<div class="aa_a">A</div>
@@ -13,9 +17,15 @@
 	</form>
 </div>
 <?php elseif ( $type == 'spam-check' ) :?>
+<<<<<<< HEAD
 <div id="akismet-warning" class="updated fade">
 	<p><strong><?php esc_html_e( 'Akismet has detected a problem.', 'akismet' );?></strong></p>
 	<p><?php printf( __( 'Some comments have not yet been checked for spam by Akismet. They have been temporarily held for moderation and will automatically be rechecked later.', 'akismet' ) ); ?></p>
+=======
+<div class="notice notice-warning">
+	<p><strong><?php esc_html_e( 'Akismet has detected a problem.', 'akismet' );?></strong></p>
+	<p><?php esc_html_e( 'Some comments have not yet been checked for spam by Akismet. They have been temporarily held for moderation and will automatically be rechecked later.', 'akismet' ); ?></p>
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 	<?php if ( $link_text ) { ?>
 		<p><?php echo $link_text; ?></p>
 	<?php } ?>
@@ -132,4 +142,14 @@
 	</p>
 	<?php endif; ?>
 </div>
+<<<<<<< HEAD
 <?php endif;?>
+=======
+<?php elseif ( $type == 'privacy' ) :?>
+<div class="notice notice-warning is-dismissible" id="akismet-privacy-notice-admin-notice">
+	<p><strong><?php esc_html_e( 'Akismet & Privacy.', 'akismet' );?></strong></p>
+	<p><?php esc_html_e( 'To help your site with transparency under privacy laws like the GDPR, Akismet can display a notice to your users under your comment forms. This feature is disabled by default, however, you can turn it on below.', 'akismet' ); ?></p>
+	<p><?php printf( __(' Please <a href="%s">enable</a> or <a href="%s">disable</a> this feature. <a href="%s" id="akismet-privacy-notice-control-notice-info-link" target="_blank">More information</a>.', 'akismet' ), admin_url( apply_filters( 'akismet_comment_form_privacy_notice_url_display', 'options-general.php?page=akismet-key-config&akismet_comment_form_privacy_notice=display' ) ), admin_url( apply_filters( 'akismet_comment_form_privacy_notice_url_hide', 'options-general.php?page=akismet-key-config&akismet_comment_form_privacy_notice=hide' ) ), 'https://akismet.com/privacy/' ); ?></p>
+</div>
+<?php endif;?>
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651

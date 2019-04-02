@@ -65,6 +65,10 @@ if (function_exists('add_theme_support'))
 // HTML5 Blank navigation
 function html5blank_nav()
 {
+<<<<<<< HEAD
+=======
+	//menu class => 
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 	wp_nav_menu(
 	array(
 		'theme_location'  => 'header-menu',
@@ -72,7 +76,11 @@ function html5blank_nav()
 		'container'       => 'div',
 		'container_class' => 'menu-{menu slug}-container',
 		'container_id'    => '',
+<<<<<<< HEAD
 		'menu_class'      => 'menu',
+=======
+		'menu_class'      => 'nav nav-pills float-right',
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 		'menu_id'         => '',
 		'echo'            => true,
 		'fallback_cb'     => 'wp_page_menu',
@@ -118,6 +126,11 @@ function html5blank_styles()
     wp_register_style('normalize', get_template_directory_uri() . '/normalize.css', array(), '1.0', 'all');
     wp_enqueue_style('normalize'); // Enqueue it!
 
+<<<<<<< HEAD
+=======
+    wp_enqueue_style('bootstrap', 'https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css');
+
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
     wp_register_style('html5blank', get_template_directory_uri() . '/style.css', array(), '1.0', 'all');
     wp_enqueue_style('html5blank'); // Enqueue it!
 }

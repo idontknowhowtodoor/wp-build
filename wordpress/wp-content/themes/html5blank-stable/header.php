@@ -26,10 +26,17 @@
 	<body <?php body_class(); ?>>
 
 		<!-- wrapper -->
+<<<<<<< HEAD
 		<div class="wrapper">
 
 			<!-- header -->
 			<header class="header clear" role="banner">
+=======
+		<div class="container">
+
+			<!-- header -->
+			<div class="header clearfix">
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 
 					<!-- logo -->
 					<div class="logo">
@@ -41,10 +48,20 @@
 					<!-- /logo -->
 
 					<!-- nav -->
+<<<<<<< HEAD
 					<nav class="nav" role="navigation">
 						<?php html5blank_nav(); ?>
 					</nav>
 					<!-- /nav -->
 
 			</header>
+=======
+					<nav>
+						<?php html5blank_nav(); ?>
+					</nav>
+					<h1><?php the_title(); ?></h1>
+					<!-- /nav -->
+
+			</div>
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 			<!-- /header -->

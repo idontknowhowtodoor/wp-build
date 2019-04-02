@@ -30,6 +30,10 @@ class Akismet {
 
 		add_action( 'akismet_scheduled_delete', array( 'Akismet', 'delete_old_comments' ) );
 		add_action( 'akismet_scheduled_delete', array( 'Akismet', 'delete_old_comments_meta' ) );
+<<<<<<< HEAD
+=======
+		add_action( 'akismet_scheduled_delete', array( 'Akismet', 'delete_orphaned_commentmeta' ) );
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 		add_action( 'akismet_schedule_cron_recheck', array( 'Akismet', 'cron_recheck' ) );
 
 		add_action( 'comment_form',  array( 'Akismet',  'add_comment_nonce' ), 1 );
@@ -50,6 +54,12 @@ class Akismet {
 		// Jetpack compatibility
 		add_filter( 'jetpack_options_whitelist', array( 'Akismet', 'add_to_jetpack_options_whitelist' ) );
 		add_action( 'update_option_wordpress_api_key', array( 'Akismet', 'updated_option' ), 10, 2 );
+<<<<<<< HEAD
+=======
+		add_action( 'add_option_wordpress_api_key', array( 'Akismet', 'added_option' ), 10, 2 );
+
+		add_action( 'comment_form_after',  array( 'Akismet',  'display_comment_form_privacy_notice' ) );
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 	}
 
 	public static function get_api_key() {
@@ -109,6 +119,21 @@ class Akismet {
 		}
 	}
 	
+<<<<<<< HEAD
+=======
+	/**
+	 * Treat the creation of an API key the same as updating the API key to a new value.
+	 *
+	 * @param mixed  $option_name   Will always be "wordpress_api_key", until something else hooks in here.
+	 * @param mixed  $value         The option value.
+	 */
+	public static function added_option( $option_name, $value ) {
+		if ( 'wordpress_api_key' === $option_name ) {
+			return self::updated_option( '', $value );
+		}
+	}
+	
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 	public static function rest_auto_check_comment( $commentdata ) {
 		self::$is_rest_api_call = true;
 		
@@ -348,6 +373,10 @@ class Akismet {
 
 			foreach ( $comment_ids as $comment_id ) {
 				do_action( 'delete_comment', $comment_id );
+<<<<<<< HEAD
+=======
+				do_action( 'akismet_batch_delete_count', __FUNCTION__ );
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 			}
 
 			// Prepared as strings since comment_id is an unsigned BIGINT, and using %d will constrain the value to the maximum signed BIGINT.
@@ -369,7 +398,11 @@ class Akismet {
 
 		$interval = apply_filters( 'akismet_delete_commentmeta_interval', 15 );
 
+<<<<<<< HEAD
 		# enfore a minimum of 1 day
+=======
+		# enforce a minimum of 1 day
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 		$interval = absint( $interval );
 		if ( $interval < 1 )
 			$interval = 1;
@@ -384,6 +417,10 @@ class Akismet {
 
 			foreach ( $comment_ids as $comment_id ) {
 				delete_comment_meta( $comment_id, 'akismet_as_submitted' );
+<<<<<<< HEAD
+=======
+				do_action( 'akismet_batch_delete_count', __FUNCTION__ );
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 			}
 
 			do_action( 'akismet_delete_commentmeta_batch', count( $comment_ids ) );
@@ -393,6 +430,46 @@ class Akismet {
 			$wpdb->query("OPTIMIZE TABLE {$wpdb->commentmeta}");
 	}
 
+<<<<<<< HEAD
+=======
+	// Clear out comments meta that no longer have corresponding comments in the database
+	public static function delete_orphaned_commentmeta() {
+		global $wpdb;
+
+		$last_meta_id = 0;
+		$start_time = isset( $_SERVER['REQUEST_TIME_FLOAT'] ) ? $_SERVER['REQUEST_TIME_FLOAT'] : microtime( true );
+		$max_exec_time = max( ini_get('max_execution_time') - 5, 3 );
+
+		while ( $commentmeta_results = $wpdb->get_results( $wpdb->prepare( "SELECT m.meta_id, m.comment_id, m.meta_key FROM {$wpdb->commentmeta} as m LEFT JOIN {$wpdb->comments} as c USING(comment_id) WHERE c.comment_id IS NULL AND m.meta_id > %d ORDER BY m.meta_id LIMIT 1000", $last_meta_id ) ) ) {
+			if ( empty( $commentmeta_results ) )
+				return;
+
+			$wpdb->queries = array();
+
+			$commentmeta_deleted = 0;
+
+			foreach ( $commentmeta_results as $commentmeta ) {
+				if ( 'akismet_' == substr( $commentmeta->meta_key, 0, 8 ) ) {
+					delete_comment_meta( $commentmeta->comment_id, $commentmeta->meta_key );
+					do_action( 'akismet_batch_delete_count', __FUNCTION__ );
+					$commentmeta_deleted++;
+				}
+
+				$last_meta_id = $commentmeta->meta_id;
+			}
+
+			do_action( 'akismet_delete_commentmeta_batch', $commentmeta_deleted );
+
+			// If we're getting close to max_execution_time, quit for this round.
+			if ( microtime(true) - $start_time > $max_exec_time )
+				return;
+		}
+
+		if ( apply_filters( 'akismet_optimize_table', ( mt_rand(1, 5000) == 11), $wpdb->commentmeta ) ) // lucky number
+			$wpdb->query("OPTIMIZE TABLE {$wpdb->commentmeta}");
+	}
+
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 	// how many approved comments does this author have?
 	public static function get_user_comments_approved( $user_id, $comment_author_email, $comment_author, $comment_author_url ) {
 		global $wpdb;
@@ -520,6 +597,14 @@ class Akismet {
 		if ( $new_status == $old_status )
 			return;
 
+<<<<<<< HEAD
+=======
+		if ( 'spam' === $new_status || 'spam' === $old_status ) {
+			// Clear the cache of the "X comments in your spam queue" count on the dashboard.
+			wp_cache_delete( 'akismet_spam_count', 'widget' );
+		}
+
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 		# we don't need to record a history item for deleted comments
 		if ( $new_status == 'delete' )
 			return;
@@ -701,7 +786,16 @@ class Akismet {
 		foreach ( (array) $comment_errors as $comment_id ) {
 			// if the comment no longer exists, or is too old, remove the meta entry from the queue to avoid getting stuck
 			$comment = get_comment( $comment_id );
+<<<<<<< HEAD
 			if ( !$comment || strtotime( $comment->comment_date_gmt ) < strtotime( "-15 days" ) ) {
+=======
+
+			if (
+				! $comment // Comment has been deleted
+				|| strtotime( $comment->comment_date_gmt ) < strtotime( "-15 days" ) // Comment is too old.
+				|| $comment->comment_approved !== "0" // Comment is no longer in the Pending queue
+				) {
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 				delete_comment_meta( $comment_id, 'akismet_error' );
 				delete_comment_meta( $comment_id, 'akismet_delayed_moderation_email' );
 				continue;
@@ -1141,7 +1235,11 @@ class Akismet {
 <!doctype html>
 <html>
 <head>
+<<<<<<< HEAD
 <meta charset="<?php bloginfo( 'charset' ); ?>">
+=======
+<meta charset="<?php bloginfo( 'charset' ); ?>" />
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 <style>
 * {
 	text-align: center;
@@ -1154,6 +1252,10 @@ p {
 	font-size: 18px;
 }
 </style>
+<<<<<<< HEAD
+=======
+</head>
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 <body>
 <p><?php echo esc_html( $message ); ?></p>
 </body>
@@ -1342,4 +1444,24 @@ p {
 		
 		return apply_filters( 'akismet_predefined_api_key', false );
 	}
+<<<<<<< HEAD
+=======
+
+	/**
+	 * Controls the display of a privacy related notice underneath the comment form using the `akismet_comment_form_privacy_notice` option and filter respectively.
+	 * Default is top not display the notice, leaving the choice to site admins, or integrators.
+	 */
+	public static function display_comment_form_privacy_notice() {
+		if ( 'display' !== apply_filters( 'akismet_comment_form_privacy_notice', get_option( 'akismet_comment_form_privacy_notice', 'hide' ) ) ) {
+			return;
+		}
+		echo apply_filters(
+			'akismet_comment_form_privacy_notice_markup',
+			'<p class="akismet_comment_form_privacy_notice">' . sprintf(
+				__( 'This site uses Akismet to reduce spam. <a href="%s" target="_blank" rel="nofollow noopener">Learn how your comment data is processed</a>.', 'akismet' ),
+				'https://akismet.com/privacy/'
+			) . '</p>'
+		);
+	}
+>>>>>>> 4f56162f325834984e19aec854956e5e56e62651
 }
